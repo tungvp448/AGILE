@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CarryCup: Reusable Bottle Holder — Concept Prototype</title>
+<style>
+:root{
+  --bg:#faf6ef; --bg2:#f3ece0; --card:#fffdf9; --ink:#1f2a2e; --muted:#566265; --line:#e2d8c8;
+  --teal:#0f7c7a; --teal-d:#0a5f5d; --teal-l:#e2f2f1; --orange:#d9701a; --orange-l:#fcebd9;
+  --tan:#d4a76a; --tan-d:#8a5d2c; --form:#3f51b5; --form-d:#26327a; --strap:#56606b; --strap-d:#353c44;
+  --hook:#2f3437; --bottle:#d6eef3; --bottle-d:#2c7a8a;
+  --radius:14px; --shadow:0 1px 2px rgba(60,40,10,.06),0 6px 20px rgba(60,40,10,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+a{color:var(--teal-d)}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px;border-radius:4px}
+h1,h2,h3{line-height:1.2;margin:0 0 .4em}
+h1{font-size:clamp(1.7rem,3vw,2.4rem);letter-spacing:-.01em}
+h2{font-size:1.5rem;margin-top:.2em}
+h3{font-size:1.2rem}
+p{margin:.3em 0 .8em}
+.wrap{max-width:1360px;margin:0 auto;padding:0 24px}
+section{padding:36px 0 12px}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:20;background:rgba(250,246,239,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:20px;min-height:58px;flex-wrap:wrap}
+.brand{font-weight:800;font-size:1.1rem;display:flex;align-items:center;gap:8px}
+.brand .dot{width:12px;height:12px;border-radius:50%;background:var(--teal);box-shadow:8px 0 0 var(--orange)}
+.brand span{margin-left:8px}
+.top nav{display:flex;gap:4px;flex-wrap:wrap;flex:1}
+.top nav a{text-decoration:none;color:var(--ink);padding:6px 10px;border-radius:8px;font-size:.92rem}
+.top nav a:hover{background:var(--bg2)}
+.switch{display:flex;align-items:center;gap:10px;font-weight:600;font-size:.95rem;cursor:pointer;user-select:none}
+.switch input{position:absolute;opacity:0;width:1px;height:1px}
+.switch .track{width:44px;height:24px;border-radius:12px;background:#cfc6b7;position:relative;transition:background .2s}
+.switch .track::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.switch input:checked + .track{background:var(--orange)}
+.switch input:checked + .track::after{transform:translateX(20px)}
+.switch input:focus-visible + .track{outline:3px solid var(--orange);outline-offset:2px}
+
+/* intro */
+.intro{padding-top:28px}
+.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.78rem;font-weight:700;color:var(--teal-d)}
+.problem{max-width:820px;font-size:1.05rem}
+.notice{display:flex;gap:12px;align-items:flex-start;background:var(--orange-l);border:1px solid #f0c9a0;border-left:5px solid var(--orange);padding:12px 16px;border-radius:10px;max-width:900px;font-weight:600}
+.notice b{color:#8a4300}
+.tester-banner{display:none;background:var(--ink);color:#fff;padding:8px 14px;border-radius:8px;margin-top:10px;font-weight:600}
+.tester .tester-banner{display:inline-block}
+
+/* concept cards */
+.concepts{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.concept{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 20px 16px;display:flex;flex-direction:column;min-width:0}
+.concept header{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.tag{font-size:.75rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px}
+.tag.fold{background:#f3e3cb;color:#7a4e1f}
+.tag.form{background:#e3e6f7;color:var(--form-d)}
+.concept h3{margin:0}
+.oneliner{margin:.4em 0 .2em;color:var(--muted)}
+.drawing{width:100%;height:auto;max-height:640px;display:block;margin:6px auto 0;touch-action:manipulation}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.btn{font:inherit;font-size:.92rem;font-weight:650;padding:9px 14px;border-radius:10px;border:1.5px solid var(--teal);background:var(--teal);color:#fff;cursor:pointer;transition:background .15s,opacity .15s}
+.btn:hover:not(:disabled){background:var(--teal-d)}
+.btn.ghost{background:transparent;color:var(--teal-d)}
+.btn.ghost:hover:not(:disabled){background:var(--teal-l)}
+.btn.ghost[aria-pressed="true"]{background:var(--teal-l);border-color:var(--teal-d)}
+.btn.warn{border-color:#b54a1a;color:#9a3a10;background:transparent}
+.btn.warn:hover{background:#fbe6dc}
+.btn:disabled{opacity:.42;cursor:not-allowed}
+.status{font-size:.86rem;color:var(--muted);margin-top:8px;display:flex;gap:14px;flex-wrap:wrap}
+.status b{color:var(--ink)}
+.caption{margin-top:10px;background:var(--teal-l);border-radius:10px;padding:10px 14px;min-height:3.2em;font-size:.95rem}
+.caption .caption-hidden{display:none;color:var(--muted);font-style:italic}
+.tester .caption .caption-text{display:none}
+.tester .caption .caption-hidden{display:block}
+.info{margin-top:10px;border:1px dashed #cdbfa8;border-radius:10px;padding:10px 14px;font-size:.92rem;min-height:3.2em;background:#fff}
+.info strong{display:block;color:var(--teal-d)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:14px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:5px;border:1px solid rgba(0,0,0,.25)}
+.dimnote{font-size:.82rem;color:var(--muted);margin-top:6px}
+.op-note{text-align:center;color:var(--muted);font-size:.9rem;margin:14px 0 0}
+
+/* svg parts */
+.p-tan{fill:var(--tan);stroke:var(--tan-d);stroke-width:1.5}
+.p-form{fill:var(--form);stroke:var(--form-d);stroke-width:1.5}
+.p-form-t{fill:var(--form);fill-opacity:.38;stroke:var(--form-d);stroke-width:1.5}
+.p-strap{fill:var(--strap);stroke:var(--strap-d);stroke-width:1.5}
+.p-hook{fill:url(#hookPat);stroke:#15181a;stroke-width:1}
+.p-bottle{fill:var(--bottle);stroke:var(--bottle-d);stroke-width:1.6}
+.p-cap{fill:var(--bottle-d)}
+.p-latch{fill:var(--orange);stroke:#8a4300;stroke-width:1}
+.slot{fill:#3a2814}
+.stitch{stroke:#aab2bb;stroke-width:1;stroke-dasharray:4 4}
+.corr{fill:none;stroke:var(--tan-d);stroke-width:1;opacity:.6}
+.foldline{stroke:var(--tan-d);stroke-width:1.5;stroke-dasharray:3 2}
+.hook-line{fill:none;stroke:var(--hook);stroke-width:10;stroke-linecap:round}
+.hook-line.wide{stroke-width:14}
+.shine{stroke:#fff;stroke-width:5;stroke-linecap:round;opacity:.75}
+.ring-back{fill:none;stroke:var(--form-d);stroke-width:7}
+.ring-front{fill:none;stroke:var(--form);stroke-width:9;stroke-linecap:round}
+.ring-top{fill:none;stroke:var(--form);stroke-width:5}
+.dish{fill:#5d6dc4;stroke:var(--form-d);stroke-width:1}
+.t-orient,.t-view{font-size:11px;fill:var(--muted)}
+.t-inset{font-size:10px;font-weight:700;fill:var(--muted)}
+.inset-bg{fill:#fff;stroke:#cdbfa8;stroke-dasharray:4 3}
+.s-arrow{fill:none;stroke:var(--orange);stroke-width:2.2;marker-end:url(#arrO)}
+.s-dash{fill:none;stroke:var(--tan-d);stroke-width:1.5;stroke-dasharray:4 3}
+.ghost-bottle{fill:none;stroke:var(--bottle-d);stroke-width:1.3;stroke-dasharray:4 3}
+.t-sb{font-size:10px;fill:var(--muted);font-weight:600}
+
+/* labels */
+.lbl{cursor:pointer}
+.lbl-r{fill:#fff;stroke:#9c8d76;stroke-width:1}
+.lbl-t{font-size:11.5px;font-weight:650;fill:var(--ink)}
+.lbl-t tspan.sub{font-size:10px;font-weight:500;fill:var(--muted)}
+.lbl-l{stroke:#6f6352;stroke-width:1;fill:none}
+.lbl-d{fill:#6f6352}
+.lbl:hover .lbl-r{fill:var(--orange-l)}
+.lbl:focus{outline:none}
+.lbl:focus-visible .lbl-r{stroke:var(--orange);stroke-width:3}
+.lbl.on .lbl-r{fill:var(--orange-l);stroke:var(--orange);stroke-width:2}
+.part{transition:filter .2s}
+.part.hl{filter:drop-shadow(0 0 3px var(--orange)) drop-shadow(0 0 3px var(--orange))}
+.tester .lbl{display:none}
+
+/* state animations (shared) */
+.holder,.bottle-move,.ex-support,.ex-band,.ex-ring,.ex-clip,.mount-closed,.iplate,.iholder,.gate{transition:transform .9s cubic-bezier(.45,.05,.3,1),opacity .5s}
+.holder{transform:translate(30px,0)}
+.is-attached .holder,.is-exploded .holder{transform:translate(0,0)}
+.bottle-move{transform:translate(180px,-160px)}
+.bottle-near .bottle-move{transform:translate(4px,-16px)}
+.bottle-above .bottle-move{transform:translate(0,-182px)}
+.bottle-in .bottle-move{transform:translate(0,0)}
+.is-exploded .bottle-move{transform:translate(0,-196px)}
+/* Fold */
+.mount-closed,.mount-closed-i{opacity:0;transition:opacity .5s,transform .8s}
+.is-secured .mount-closed,.is-secured .mount-closed-i,.is-exploded .mount-closed-i{opacity:1}
+.is-exploded .mount-closed{opacity:1;transform:translate(-40px,0)}
+.mount-open{transition:opacity .4s}
+.is-secured .mount-open,.is-exploded .mount-open{opacity:0}
+.band-c{opacity:0;transition:opacity .45s}
+.band-closed .band-c,.is-exploded .band-c{opacity:1}
+.band-o{transition:opacity .45s}
+.band-closed .band-o,.is-exploded .band-o{opacity:0}
+.is-exploded .ex-band{transform:translate(70px,0)}
+.is-exploded .ex-support{transform:translate(0,40px)}
+.iplate{transform:translate(18px,0)}
+.is-attached .iplate,.is-exploded .iplate{transform:none}
+/* Form */
+.gate{transform:translate(-14px,0)}
+.is-secured .gate,.is-exploded .gate{transform:none}
+.latch{fill:#a3a9b0;transition:fill .3s}
+.is-secured .latch,.is-exploded .latch{fill:var(--orange)}
+.igate{transform-box:fill-box;transform-origin:100% 50%;transform:rotate(40deg);transition:transform .6s}
+.is-secured .igate,.is-exploded .igate{transform:none}
+.iholder{transform:translate(0,22px)}
+.is-attached .iholder,.is-exploded .iholder{transform:none}
+.ibottle{opacity:0;transition:opacity .5s}
+.bottle-in .ibottle{opacity:1}
+.is-exploded .ex-ring{transform:translate(0,-40px)}
+.is-exploded .ex-clip{transform:translate(-30px,0)}
+@media (prefers-reduced-motion:reduce){
+  *{transition-duration:.01s!important;scroll-behavior:auto!important}
+}
+
+/* storyboards */
+.boards{display:grid;grid-template-columns:1fr;gap:22px}
+.board{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px}
+.board-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.board-head h3{margin:0;flex:1}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;list-style:none;margin:0;padding:0}
+.step{border:1.5px solid var(--line);border-radius:12px;padding:10px 12px 12px;background:#fff;position:relative;transition:border-color .25s,box-shadow .25s,transform .25s}
+.step.is-current{border-color:var(--orange);box-shadow:0 0 0 3px var(--orange-l);transform:translateY(-2px)}
+.step .num{position:absolute;top:8px;left:10px;width:26px;height:26px;border-radius:50%;background:var(--teal);color:#fff;font-weight:800;display:grid;place-items:center;font-size:.9rem}
+.board.form .step .num{background:var(--form)}
+.board.fold .step .num{background:var(--tan-d)}
+.step svg{width:100%;height:auto;display:block;margin-top:4px}
+.step-text{font-size:.9rem;margin:6px 0 0;font-weight:600}
+.step-hidden{display:none;font-size:.85rem;color:var(--muted);font-style:italic;margin:6px 0 0}
+.tester .step-text,.tester .explain{display:none!important}
+.tester .step-hidden{display:block}
+
+/* assumptions & cost */
+.grid3{display:grid;grid-template-columns:1fr 1.25fr 1.25fr;gap:22px;align-items:start}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px}
+.panel h3{display:flex;align-items:center;gap:8px}
+.badge{font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:var(--orange-l);color:#8a4300;padding:2px 8px;border-radius:10px}
+.field{display:grid;grid-template-columns:1fr 110px;gap:10px;align-items:center;margin:10px 0}
+.field label{font-weight:600;font-size:.93rem}
+.field small{display:block;font-weight:400;color:var(--muted);font-size:.8rem}
+input[type=number],input[type=text],select,textarea{font:inherit;font-size:.95rem;padding:7px 9px;border:1.5px solid #cbbfab;border-radius:8px;background:#fff;color:var(--ink);width:100%}
+input[type=number]{text-align:right}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--orange);outline-offset:1px;border-color:var(--orange)}
+textarea{min-height:68px;resize:vertical}
+.unit{font-size:.8rem;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
+td.num,th.num{text-align:right;white-space:nowrap}
+.bom input[type=number]{width:96px;padding:5px 7px}
+.bom input.qty{width:60px}
+tr.total td{font-weight:800;border-bottom:none;border-top:2px solid var(--ink)}
+.formula{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.82rem;background:var(--bg2);padding:8px 10px;border-radius:8px;margin:10px 0;color:#3c3326;word-break:break-word}
+.excluded{font-size:.85rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:8px;margin-top:8px}
+.verdict{margin-top:14px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--teal);border-radius:10px;padding:10px 14px;font-size:.95rem}
+
+/* compare */
+.cmp{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.cmp table{font-size:.94rem}
+.cmp th[scope=row]{text-transform:none;letter-spacing:0;font-size:.92rem;color:var(--ink);width:17%;background:var(--bg2)}
+.cmp thead th{background:#fff;font-size:.85rem}
+.cmp td,.cmp th{padding:11px 14px}
+.cmp thead th.fold{color:#7a4e1f}
+.cmp thead th.form{color:var(--form-d)}
+.ans-hidden{display:none;color:var(--muted);font-style:italic}
+.tester .cmp .ans{display:none}
+.tester .cmp .ans-hidden{display:inline}
+.pref{display:grid;grid-template-columns:auto 1fr;gap:18px;margin-top:18px;align-items:start}
+.radios{display:flex;flex-direction:column;gap:8px}
+.radios label{display:flex;gap:8px;align-items:center;font-weight:600;cursor:pointer}
+.radios input{width:18px;height:18px;accent-color:var(--teal)}
+
+/* tester */
+.questions{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 20px 14px 40px;font-weight:600;font-size:1.02rem}
+.questions li{margin:6px 0}
+.testers{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:18px}
+fieldset.tester-card{border:1px solid var(--line);border-radius:var(--radius);background:var(--card);padding:16px 20px;margin:0;box-shadow:var(--shadow);min-width:0}
+fieldset.tester-card legend{font-weight:800;font-size:1.1rem;padding:0 8px}
+.tester-card label.q{display:block;font-weight:600;font-size:.9rem;margin:10px 0 4px}
+.checklist{margin-top:14px;background:var(--bg2);border-radius:10px;padding:10px 14px}
+.checklist p{margin:0 0 6px;font-weight:700;font-size:.88rem}
+.checklist label{display:flex;gap:8px;align-items:center;font-size:.9rem;margin:5px 0;cursor:pointer}
+.checklist input{width:17px;height:17px;accent-color:var(--orange)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
+footer{margin-top:40px;padding:22px 0 40px;border-top:1px solid var(--line);color:var(--muted);font-size:.88rem}
+
+@media (max-width:1100px){.grid3{grid-template-columns:1fr}}
+.panel{min-width:0}
+@media (max-width:980px){
+  .concepts{grid-template-columns:1fr}
+  .steps{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:720px){
+  .wrap{padding:0 16px}
+  .grid3,.testers,.pref{grid-template-columns:1fr}
+  .top nav{display:none}
+  .cmp{overflow-x:auto}
+  .cmp table{min-width:560px}
+  .steps{grid-template-columns:1fr 1fr}
+}
+@media (max-width:440px){.steps{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<!-- Shared SVG definitions -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="hookPat" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="6" height="6" fill="#2f3437"/>
+      <line x1="0" y1="0" x2="0" y2="6" stroke="#5a6166" stroke-width="2"/>
+    </pattern>
+    <marker id="arrO" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#d9701a"/>
+    </marker>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><i class="dot" aria-hidden="true"></i><span>CarryCup</span></div>
+    <nav aria-label="Sections">
+      <a href="#drawings">Drawings</a>
+      <a href="#assembly">Assembly</a>
+      <a href="#assumptions">Assumptions &amp; cost</a>
+      <a href="#compare">Compare</a>
+      <a href="#tester">Tester session</a>
+    </nav>
+    <label class="switch" for="testerToggle">
+      <input type="checkbox" id="testerToggle" aria-describedby="testerHelp">
+      <span class="track" aria-hidden="true"></span>
+      Tester mode
+    </label>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="intro" aria-labelledby="pageTitle">
+    <div class="eyebrow">University innovation challenge · concept demonstrator</div>
+    <h1 id="pageTitle">CarryCup: Reusable Bottle Holder</h1>
+    <p class="problem"><b>Customer problem:</b> students carrying a laptop, books and a reusable bottle struggle to hold everything, so bottles get left behind. <b>Concept:</b> a bottle holder that attaches to a backpack strap. Two versions are compared below.</p>
+    <p class="notice" role="note"><span aria-hidden="true">⚠</span><span><b>Interactive concept prototype.</b> Dimensions and costs are assumptions. Physical fit, retention, and durability have not been tested.</span></p>
+    <div class="tester-banner" id="testerHelp">Tester mode is on: labels, captions, step text and comparison answers are hidden.</div>
+  </section>
+
+  <!-- ===================== DRAWINGS ===================== -->
+  <section id="drawings" aria-labelledby="drawH">
+    <h2 id="drawH">Labeled drawings</h2>
+    <p class="muted explain">Select a label on a drawing for a short explanation. Use the buttons to attach the holder, insert and remove the bottle, or explode the parts. The inset (bottom left) shows how each version grips the strap.</p>
+    <div class="concepts">
+
+      <!-- ---------- FOLD ---------- -->
+      <article class="concept" id="fold" aria-labelledby="foldH">
+        <header>
+          <span class="tag fold">A · Cardboard-style</span>
+          <h3 id="foldH">CarryCup Fold</h3>
+        </header>
+        <p class="oneliner explain">Folded card backplate and bottom support. Hook-and-loop straps (separate, add-on parts) mount it to the strap and hold the bottle.</p>
+
+        <svg id="svgFold" class="drawing" viewBox="0 0 520 560" role="img" aria-labelledby="foldSvgT foldSvgD">
+          <title id="foldSvgT">CarryCup Fold, side view</title>
+          <desc id="foldSvgD">Schematic side view. Backpack strap on the left. A folded cardboard backplate sits against the strap with two hook-and-loop mounting straps wrapped around it. The bottle stands on a cardboard bottom support and is held by a hook-and-loop body band. Inset: rear view of the mounting straps.</desc>
+          <text class="t-orient" x="136" y="16" text-anchor="end">◂ wearer</text>
+          <text class="t-orient" x="166" y="16">front ▸</text>
+          <text class="t-view" x="514" y="16" text-anchor="end">Side view · schematic, not to scale</text>
+
+          <g id="F-strap" class="part">
+            <rect class="p-strap" x="140" y="24" width="22" height="536" rx="4"/>
+            <line class="stitch" x1="144" y1="30" x2="144" y2="556"/>
+            <line class="stitch" x1="158" y1="30" x2="158" y2="556"/>
+          </g>
+
+          <g class="holder">
+            <g id="F-mount-o" class="part mount-open">
+              <path class="hook-line" d="M175 268 q-20 6 -24 40"/>
+              <path class="hook-line" d="M175 398 q-20 6 -24 34"/>
+            </g>
+            <g id="F-band-o" class="part band-o"><path class="hook-line wide" d="M190 344 q48 4 66 56"/></g>
+            <g id="F-plate" class="part">
+              <rect class="p-tan" x="174" y="220" width="16" height="220" rx="2"/>
+              <polyline id="F-corr" class="corr" points=""/>
+            </g>
+            <g class="ex-support">
+              <g id="F-support" class="part">
+                <rect class="p-tan" x="174" y="440" width="110" height="14" rx="2"/>
+                <rect class="p-tan" x="270" y="420" width="14" height="34" rx="2"/>
+                <line class="foldline" x1="190" y1="441" x2="190" y2="453"/>
+              </g>
+              <g id="F-sL"></g>
+            </g>
+            <g id="F-hA"></g>
+          </g>
+
+          <g transform="translate(196 210)">
+            <g class="bottle-move">
+              <g id="F-bottle" class="part">
+                <path class="p-bottle" d="M0 60 Q0 34 24 28 L46 28 Q70 34 70 60 L70 222 Q70 230 62 230 L8 230 Q0 230 0 222 Z"/>
+                <rect class="p-bottle" x="23" y="16" width="24" height="14"/>
+                <rect class="p-cap" x="20" y="0" width="30" height="18" rx="3"/>
+                <path class="shine" d="M12 72 L12 200"/>
+              </g>
+              <g id="F-hB"></g>
+            </g>
+          </g>
+
+          <g class="holder">
+            <g class="ex-band">
+              <g id="F-band" class="part band-c">
+                <rect class="p-hook" x="182" y="336" width="92" height="16" rx="4"/>
+                <rect class="p-latch" x="268" y="332" width="12" height="24" rx="3"/>
+              </g>
+              <g id="F-hC"></g>
+            </g>
+          </g>
+
+          <g class="mount-closed">
+            <g id="F-mount" class="part">
+              <rect class="p-hook" x="132" y="262" width="62" height="12" rx="5"/>
+              <rect class="p-hook" x="126" y="259" width="12" height="18" rx="3"/>
+              <rect class="p-hook" x="132" y="392" width="62" height="12" rx="5"/>
+              <rect class="p-hook" x="126" y="389" width="12" height="18" rx="3"/>
+            </g>
+          </g>
+
+          <!-- inset: rear view -->
+          <g transform="translate(6 404)">
+            <rect class="inset-bg" width="124" height="150" rx="8"/>
+            <text class="t-inset" x="8" y="15">Rear view</text>
+            <g class="iplate">
+              <rect class="p-tan" x="32" y="34" width="60" height="100" rx="2"/>
+              <rect class="slot" x="34" y="52" width="5" height="14"/><rect class="slot" x="85" y="52" width="5" height="14"/>
+              <rect class="slot" x="34" y="80" width="5" height="14"/><rect class="slot" x="85" y="80" width="5" height="14"/>
+              <rect class="slot" x="34" y="108" width="5" height="14"/><rect class="slot" x="85" y="108" width="5" height="14"/>
+              <g class="mount-open">
+                <rect class="p-hook" x="33" y="60" width="7" height="26" rx="3"/>
+                <rect class="p-hook" x="33" y="116" width="7" height="24" rx="3"/>
+              </g>
+            </g>
+            <rect class="p-strap" x="46" y="22" width="32" height="124" rx="3"/>
+            <g class="mount-closed-i">
+              <rect class="p-hook" x="30" y="53" width="64" height="12" rx="4"/>
+              <rect class="p-hook" x="30" y="109" width="64" height="12" rx="4"/>
+            </g>
+          </g>
+
+          <g id="F-lbl"></g>
+        </svg>
+
+        <div class="controls" role="group" aria-label="Fold interactions">
+          <button class="btn" data-act="attach">Attach to bag</button>
+          <button class="btn" data-act="insert">Insert bottle</button>
+          <button class="btn" data-act="remove">Remove bottle</button>
+          <button class="btn ghost" data-act="explode" aria-pressed="false">Exploded view</button>
+          <button class="btn ghost" data-act="reset">Reset view</button>
+        </div>
+        <div class="status explain" aria-live="polite"></div>
+        <div class="caption" aria-live="polite"><span class="caption-text"></span><span class="caption-hidden">Caption hidden in tester mode.</span></div>
+        <div class="info explain" aria-live="polite"><span class="muted">Select a label on the drawing to read what that part does.</span></div>
+        <div class="legend explain">
+          <span><i style="background:var(--tan)"></i>Cardboard (folded)</span>
+          <span><i style="background:#2f3437"></i>Hook-and-loop — additional components</span>
+          <span><i style="background:var(--orange)"></i>Pull tab</span>
+        </div>
+        <div class="dimnote">Design target (assumed): bottle Ø<span class="d-dia">70</span> × <span class="d-h">230</span> mm, strap <span class="d-s">40</span> mm wide. Drawing is schematic and does not resize.</div>
+      </article>
+
+      <!-- ---------- FORM ---------- -->
+      <article class="concept" id="form" aria-labelledby="formH">
+        <header>
+          <span class="tag form">B · 3D-printed</span>
+          <h3 id="formH">CarryCup Form</h3>
+        </header>
+        <p class="oneliner explain">Printed frame (backplate + bottom cradle), upper retaining ring, and a rear clip with a closing latch around the strap.</p>
+
+        <svg id="svgForm" class="drawing" viewBox="0 0 520 560" role="img" aria-labelledby="formSvgT formSvgD">
+          <title id="formSvgT">CarryCup Form, side view</title>
+          <desc id="formSvgD">Schematic side view. Backpack strap on the left. A printed frame with a backplate and bottom cradle; an upper retaining ring surrounds the bottle body; a rear clip passes around the strap and closes with a latch. Inset: top view of the clip and latch.</desc>
+          <text class="t-orient" x="136" y="16" text-anchor="end">◂ wearer</text>
+          <text class="t-orient" x="166" y="16">front ▸</text>
+          <text class="t-view" x="514" y="16" text-anchor="end">Side view · schematic, not to scale</text>
+
+          <g id="M-strap" class="part">
+            <rect class="p-strap" x="140" y="24" width="22" height="536" rx="4"/>
+            <line class="stitch" x1="144" y1="30" x2="144" y2="556"/>
+            <line class="stitch" x1="158" y1="30" x2="158" y2="556"/>
+          </g>
+
+          <g class="holder">
+            <g class="ex-clip">
+              <g id="M-clip" class="part">
+                <rect class="p-form-t" x="128" y="300" width="47" height="36" rx="4"/>
+                <g class="gate" id="M-gate">
+                  <rect class="p-form" x="120" y="300" width="10" height="36" rx="3"/>
+                  <rect class="p-latch latch" x="120" y="324" width="10" height="9" rx="2"/>
+                </g>
+              </g>
+            </g>
+            <g id="M-frame" class="part">
+              <rect class="p-form" x="174" y="250" width="12" height="200" rx="3"/>
+              <rect class="p-form" x="174" y="440" width="106" height="12" rx="3"/>
+              <rect class="p-form" x="270" y="422" width="10" height="30" rx="3"/>
+              <ellipse class="dish" cx="230" cy="441" rx="44" ry="5"/>
+              <rect class="p-form" x="184" y="296" width="8" height="16" rx="2"/>
+            </g>
+            <g class="ex-ring"><g id="M-ring-b" class="part"><path class="ring-back" d="M185 304 A46 10 0 0 1 277 304"/></g></g>
+            <g id="M-hA"></g>
+          </g>
+
+          <g transform="translate(196 210)">
+            <g class="bottle-move">
+              <g id="M-bottle" class="part">
+                <path class="p-bottle" d="M0 60 Q0 34 24 28 L46 28 Q70 34 70 60 L70 222 Q70 230 62 230 L8 230 Q0 230 0 222 Z"/>
+                <rect class="p-bottle" x="23" y="16" width="24" height="14"/>
+                <rect class="p-cap" x="20" y="0" width="30" height="18" rx="3"/>
+                <path class="shine" d="M12 72 L12 200"/>
+              </g>
+              <g id="M-hB"></g>
+            </g>
+          </g>
+
+          <g class="holder">
+            <g class="ex-ring">
+              <g id="M-ring" class="part"><path class="ring-front" d="M185 304 A46 10 0 0 0 277 304"/></g>
+              <g id="M-hC"></g>
+            </g>
+          </g>
+
+          <!-- inset: top view of clip -->
+          <g transform="translate(6 404)">
+            <rect class="inset-bg" width="124" height="150" rx="8"/>
+            <text class="t-inset" x="8" y="15">Top view</text>
+            <rect class="p-strap" x="42" y="30" width="40" height="8" rx="2"/>
+            <g class="iholder">
+              <rect class="p-form" x="30" y="24" width="6" height="38"/>
+              <rect class="p-form" x="88" y="24" width="6" height="38"/>
+              <rect class="p-form" x="30" y="58" width="64" height="8" rx="2"/>
+              <g class="igate" id="M-igate">
+                <rect class="p-form" x="30" y="21" width="64" height="7" rx="2"/>
+                <circle class="p-latch latch" cx="34" cy="24.5" r="4"/>
+              </g>
+              <rect class="p-form" x="58" y="66" width="8" height="8"/>
+              <circle class="ring-top" cx="62" cy="98" r="24"/>
+              <circle class="p-bottle ibottle" cx="62" cy="98" r="19"/>
+            </g>
+            <text class="t-inset" x="118" y="146" text-anchor="end">front ↓</text>
+          </g>
+
+          <g id="M-lbl"></g>
+        </svg>
+
+        <div class="controls" role="group" aria-label="Form interactions">
+          <button class="btn" data-act="attach">Attach to bag</button>
+          <button class="btn" data-act="insert">Insert bottle</button>
+          <button class="btn" data-act="remove">Remove bottle</button>
+          <button class="btn ghost" data-act="explode" aria-pressed="false">Exploded view</button>
+          <button class="btn ghost" data-act="reset">Reset view</button>
+        </div>
+        <div class="status explain" aria-live="polite"></div>
+        <div class="caption" aria-live="polite"><span class="caption-text"></span><span class="caption-hidden">Caption hidden in tester mode.</span></div>
+        <div class="info explain" aria-live="polite"><span class="muted">Select a label on the drawing to read what that part does.</span></div>
+        <div class="legend explain">
+          <span><i style="background:var(--form)"></i>Printed parts</span>
+          <span><i style="background:var(--orange)"></i>Latch closed</span>
+          <span><i style="background:#a3a9b0"></i>Latch open</span>
+        </div>
+        <div class="dimnote">Design target (assumed): bottle Ø<span class="d-dia">70</span> × <span class="d-h">230</span> mm, strap <span class="d-s">40</span> mm wide. Drawing is schematic and does not resize.</div>
+      </article>
+    </div>
+    <p class="op-note">Animations illustrate the intended operation only. They are not physics simulations and do not show validated fit or retention.</p>
+  </section>
+
+  <!-- ===================== ASSEMBLY ===================== -->
+  <section id="assembly" aria-labelledby="asmH">
+    <h2 id="asmH">Assembly storyboards</h2>
+    <p class="muted">Four steps per version. All steps stay visible; “Step through” highlights them in order.</p>
+    <div class="boards">
+
+      <div class="board fold">
+        <div class="board-head">
+          <span class="tag fold">A</span><h3>CarryCup Fold — assembly &amp; fitting</h3>
+          <button class="btn ghost" data-play="fold">Step through</button>
+        </div>
+        <ol class="steps" id="steps-fold">
+          <li class="step"><span class="num">1</span>
+            <svg viewBox="0 0 200 140" aria-hidden="true">
+              <rect class="p-tan" x="22" y="18" width="46" height="104" rx="2"/>
+              <line class="s-dash" x1="22" y1="88" x2="68" y2="88"/>
+              <text class="t-sb" x="24" y="134">flat card, fold line</text>
+              <path class="s-arrow" d="M78 70 L108 70"/>
+              <rect class="p-tan" x="128" y="18" width="12" height="90" rx="2"/>
+              <rect class="p-tan" x="128" y="106" width="56" height="12" rx="2"/>
+              <path class="s-arrow" d="M160 44 A44 44 0 0 1 184 96"/>
+            </svg>
+            <p class="step-text">Fold the cardboard backplate and bottom support.</p>
+            <p class="step-hidden">Step text hidden</p>
+          </li>
+          <li class="step"><span class="num">2</span>
+            <svg viewBox="0 0 200 140" aria-hidden="true">
+              <rect class="p-tan" x="62" y="14" width="76" height="112" rx="2"/>
+              <rect class="slot" x="66" y="28" width="5" height="16"/><rect class="slot" x="129" y="28" width="5" height="16"/>
+              <rect class="slot" x="66" y="62" width="5" height="16"/><rect class="slot" x="129" y="62" width="5" height="16"/>
+              <rect class="slot" x="66" y="96" width="5" height="16"/><rect class="slot" x="129" y="96" width="5" height="16"/>
+              <rect class="p-hook" x="10" y="32" width="96" height="8" rx="3"/>
+              <rect class="p-hook" x="10" y="66" width="96" height="8" rx="3"/>
+              <rect class="p-hook" x="10" y="100" width="96" height="8" rx="3"/>
+              <path class="s-arrow" d="M108 36 L124 36"/><path class="s-arrow" d="M108 70 L124 70"/><path class="s-arrow" d="M108 104 L124 104"/>
+              <text class="t-sb" x="142" y="40">mount</text>
+              <text class="t-sb" x="142" y="74">band</text>
+              <text class="t-sb" x="142" y="108">mount</text>
+            </svg>
+            <p class="step-text">Thread the bottle band and two mounting straps through the slots.</p>
+            <p class="step-hidden">Step text hidden</p>
+          </li>
+          <li class="step"><span class="num">3</span>
+            <svg viewBox="0 0 200 140" aria-hidden="true">
+              <rect class="p-strap" x="60" y="0" width="16" height="140" rx="3"/>
+              <rect class="p-tan" x="86" y="22" width="10" height="106" rx="2"/>
+              <rect class="p-tan" x="86" y="120" width="70" height="8" rx="2"/>
+              <rect class="p-hook" x="52" y="44" width="48" height="10" rx="5"/>
+              <rect class="p-hook" x="52" y="96" width="48" height="10" rx="5"/>
+              <path class="s-arrow" d="M96 36 C70 18, 32 22, 40 44"/>
+              <path class="s-arrow" d="M96 88 C70 70, 32 74, 40 96"/>
+              <text class="t-sb" x="108" y="66">wrap &amp; press</text>
+              <text class="t-sb" x="108" y="78">closed</text>
+              <text class="t-sb" x="82" y="138">bag strap</text>
+            </svg>
+            <p class="step-text">Wrap the mounting straps around the bag strap and close them.</p>
+            <p class="step-hidden">Step text hidden</p>
+          </li>
+          <li class="step"><span class="num">4</span>
+            <svg viewBox="0 0 200 140" aria-hidden="true">
+              <rect class="p-strap" x="34" y="0" width="12" height="140" rx="3"/>
+              <rect class="p-tan" x="52" y="22" width="8" height="106" rx="2"/>
+              <rect class="p-tan" x="52" y="122" width="84" height="8" rx="2"/>
+              <rect class="p-tan" x="128" y="112" width="8" height="18" rx="2"/>
+              <rect class="p-bottle" x="66" y="44" width="52" height="78" rx="6"/>
+              <rect class="p-bottle" x="81" y="34" width="22" height="12"/>
+              <rect class="p-cap" x="79" y="24" width="26" height="12" rx="2"/>
+              <rect class="p-hook" x="58" y="80" width="66" height="9" rx="3"/>
+              <rect class="p-latch" x="121" y="77" width="8" height="15" rx="2"/>
+              <path class="s-arrow" d="M168 54 Q160 80 136 85"/>
+              <path class="s-arrow" d="M168 20 L132 40"/>
+              <text class="t-sb" x="142" y="112">close band</text>
+            </svg>
+            <p class="step-text">Place the bottle on the support and close the body band.</p>
+            <p class="step-hidden">Step text hidden</p>
+          </li>
+        </ol>
+      </div>
+
+      <div class="board form">
+        <div class="board-head">
+          <span class="tag form">B</span><h3>CarryCup Form — assembly &amp; fitting</h3>
+          <button class="btn ghost" data-play="form">Step through</button>
+        </div>
+        <ol class="steps" id="steps-form">
+          <li class="step"><span class="num">1</span>
+            <svg viewBox="0 0 200 140" aria-hidden="true">
+              <rect class="p-form" x="18" y="24" width="10" height="86" rx="2"/>
+              <rect class="p-form" x="18" y="102" width="48" height="8" rx="2"/>
+              <rect class="p-form" x="60" y="92" width="6" height="18" rx="2"/>
+              <ellipse cx="108" cy="66" rx="26" ry="9" fill="none" stroke="#3f51b5" stroke-width="6"/>
+              <path d="M178 44 L154 44 L154 90 L178 90" fill="none" stroke="#3f51b5" stroke-width="6"/>
+              <rect class="p-form" x="174" y="40" width="6" height="54" rx="2" transform="rotate(25 177 90)"/>
+              <circle class="p-latch" cx="168" cy="44" r="4.5"/>
+              <text class="t-sb" x="14" y="130">frame</text>
+              <text class="t-sb" x="96" y="130">ring</text>
+              <text class="t-sb" x="150" y="130">clip</text>
+            </svg>
+            <p class="step-text">Identify the printed frame, retaining ring, and rear clip.</p>
+            <p class="step-hidden">Step text hidden</p>
+          </li>
+          <li class="step"><span class="num">2</span>
+            <svg viewBox="0 0 200 140" aria-hidden="true">
+              <rect class="p-form" x="60" y="112" width="80" height="10" rx="2"/>
+              <rect class="p-form" x="60" y="66" width="7" height="50"/>
+              <rect class="p-form" x="133" y="66" width="7" height="50"/>
+              <g transform="rotate(55 140 68)">
+                <rect class="p-form" x="60" y="65" width="80" height="7" rx="2"/>
+                <circle class="p-latch" cx="64" cy="68.5" r="4.5"/>
+              </g>
+              <path class="s-arrow" d="M72 54 Q80 24 100 12"/>
+              <text class="t-sb" x="8" y="22">latch open</text>
+              <text class="t-sb" x="148" y="134">top view</text>
+            </svg>
+            <p class="step-text">Open the rear clip latch.</p>
+            <p class="step-hidden">Step text hidden</p>
+          </li>
+          <li class="step"><span class="num">3</span>
+            <svg viewBox="0 0 200 140" aria-hidden="true">
+              <rect class="p-strap" x="74" y="76" width="52" height="10" rx="2"/>
+              <rect class="p-form" x="60" y="112" width="80" height="10" rx="2"/>
+              <rect class="p-form" x="60" y="66" width="7" height="50"/>
+              <rect class="p-form" x="133" y="66" width="7" height="50"/>
+              <rect class="p-form" x="60" y="65" width="80" height="7" rx="2"/>
+              <circle class="p-latch" cx="64" cy="68.5" r="4.5"/>
+              <path class="s-arrow" d="M104 14 Q76 22 68 54"/>
+              <path d="M50 58 l-8 -6 M48 68 l-10 0 M50 78 l-8 6" stroke="#d9701a" stroke-width="2"/>
+              <text class="t-sb" x="146" y="84">strap</text>
+              <text class="t-sb" x="148" y="134">top view</text>
+            </svg>
+            <p class="step-text">Position it around the bag strap and close the latch.</p>
+            <p class="step-hidden">Step text hidden</p>
+          </li>
+          <li class="step"><span class="num">4</span>
+            <svg viewBox="0 0 200 140" aria-hidden="true">
+              <rect class="p-strap" x="22" y="0" width="12" height="140" rx="3"/>
+              <rect class="p-form" x="40" y="40" width="8" height="92" rx="2"/>
+              <rect class="p-form" x="40" y="124" width="72" height="8" rx="2"/>
+              <rect class="p-form" x="106" y="114" width="6" height="18" rx="2"/>
+              <path d="M48 72 A30 7 0 0 1 108 72" fill="none" stroke="#26327a" stroke-width="5"/>
+              <rect class="ghost-bottle" x="58" y="54" width="40" height="70" rx="5"/>
+              <rect class="p-bottle" x="58" y="30" width="40" height="70" rx="5"/>
+              <rect class="p-cap" x="68" y="18" width="20" height="13" rx="2"/>
+              <path d="M48 72 A30 7 0 0 0 108 72" fill="none" stroke="#3f51b5" stroke-width="6" stroke-linecap="round"/>
+              <path class="s-arrow" d="M134 24 L134 66"/>
+              <text class="t-sb" x="120" y="88">lower onto</text>
+              <text class="t-sb" x="120" y="100">cradle</text>
+            </svg>
+            <p class="step-text">Lower the bottle through the ring onto the cradle.</p>
+            <p class="step-hidden">Step text hidden</p>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ASSUMPTIONS & COST ===================== -->
+  <section id="assumptions" aria-labelledby="assH">
+    <h2 id="assH">Assumptions, materials &amp; cost</h2>
+    <p class="muted">All starting values are arbitrary demo assumptions, not measurements or supplier quotes. Edit them to record your own targets and estimates. Values are saved in this browser only.</p>
+    <div class="grid3">
+      <div class="panel dims">
+        <h3>Design target <span class="badge">Assumed</span></h3>
+        <p class="small muted">Records the intended target only. Changing these does not resize the drawings or any manufactured part, does not verify fit, and is not engineering analysis.</p>
+        <div class="field"><label for="dDia">Bottle diameter<small>assumed, mm</small></label><input type="number" id="dDia" min="0" step="1" value="70" data-default="70" data-persist="dDia"></div>
+        <div class="field"><label for="dH">Bottle height<small>assumed, mm</small></label><input type="number" id="dH" min="0" step="1" value="230" data-default="230" data-persist="dH"></div>
+        <div class="field"><label for="dS">Bag strap width<small>assumed, mm</small></label><input type="number" id="dS" min="0" step="1" value="40" data-default="40" data-persist="dS"></div>
+        <button class="btn ghost" id="resetAssump">Restore demo values</button>
+      </div>
+
+      <div class="panel">
+        <h3><span class="tag fold">A</span> Fold — bill of materials</h3>
+        <table class="bom">
+          <thead><tr><th>Item</th><th class="num">Qty</th><th class="num">Unit (VND)</th><th class="num">Line (VND)</th></tr></thead>
+          <tbody>
+            <tr><td>Corrugated cardboard blank<br><span class="small muted">backplate + bottom support</span></td>
+              <td class="num"><input class="qty" type="number" min="0" step="1" id="fCardQ" value="1" data-default="1" data-persist="fCardQ" aria-label="Cardboard quantity"></td>
+              <td class="num"><input type="number" min="0" step="500" id="fCardU" value="5000" data-default="5000" data-persist="fCardU" aria-label="Cardboard unit cost VND"></td>
+              <td class="num" id="fCardT"></td></tr>
+            <tr><td>Hook-and-loop body band<br><span class="small muted">additional component</span></td>
+              <td class="num"><input class="qty" type="number" min="0" step="1" id="fBandQ" value="1" data-default="1" data-persist="fBandQ" aria-label="Body band quantity"></td>
+              <td class="num"><input type="number" min="0" step="500" id="fBandU" value="6000" data-default="6000" data-persist="fBandU" aria-label="Body band unit cost VND"></td>
+              <td class="num" id="fBandT"></td></tr>
+            <tr><td>Hook-and-loop mounting strap<br><span class="small muted">additional component</span></td>
+              <td class="num"><input class="qty" type="number" min="0" step="1" id="fMountQ" value="2" data-default="2" data-persist="fMountQ" aria-label="Mounting strap quantity"></td>
+              <td class="num"><input type="number" min="0" step="500" id="fMountU" value="5000" data-default="5000" data-persist="fMountU" aria-label="Mounting strap unit cost VND"></td>
+              <td class="num" id="fMountT"></td></tr>
+            <tr><td>Adhesive<br><span class="small muted">for folded tabs</span></td>
+              <td class="num"><input class="qty" type="number" min="0" step="1" id="fGlueQ" value="1" data-default="1" data-persist="fGlueQ" aria-label="Adhesive quantity"></td>
+              <td class="num"><input type="number" min="0" step="500" id="fGlueU" value="2000" data-default="2000" data-persist="fGlueU" aria-label="Adhesive unit cost VND"></td>
+              <td class="num" id="fGlueT"></td></tr>
+            <tr class="total"><td colspan="3">Fold total (entered assumptions)</td><td class="num" id="foldTotal"></td></tr>
+          </tbody>
+        </table>
+        <div class="formula" id="foldFormula"></div>
+        <p class="excluded"><b>Excluded:</b> labor and assembly time, cutting tools, design time, wasted material, packaging, shipping, taxes.</p>
+      </div>
+
+      <div class="panel">
+        <h3><span class="tag form">B</span> Form — bill of materials</h3>
+        <table class="bom">
+          <thead><tr><th>Item</th><th class="num">Value</th><th class="num">Line (VND)</th></tr></thead>
+          <tbody>
+            <tr><td colspan="3" class="small muted">Printed parts: frame (backplate + cradle), upper retaining ring, rear clip with latch. Print material not yet selected.</td></tr>
+            <tr><td><label for="mMass">Assumed print mass, all parts</label><br><span class="small muted">grams</span></td>
+              <td class="num"><input type="number" min="0" step="1" id="mMass" value="60" data-default="60" data-persist="mMass"></td>
+              <td class="num" rowspan="2" id="mPrintT"></td></tr>
+            <tr><td><label for="mRate">Assumed printing rate</label><br><span class="small muted">VND per gram</span></td>
+              <td class="num"><input type="number" min="0" step="100" id="mRate" value="1200" data-default="1200" data-persist="mRate"></td></tr>
+            <tr><td><label for="mFin">Finishing / assembly allowance</label><br><span class="small muted">support removal, fitting; VND</span></td>
+              <td class="num"><input type="number" min="0" step="1000" id="mFin" value="15000" data-default="15000" data-persist="mFin"></td>
+              <td class="num" id="mFinT"></td></tr>
+            <tr class="total"><td colspan="2">Form total (entered assumptions)</td><td class="num" id="formTotal"></td></tr>
+          </tbody>
+        </table>
+        <div class="formula" id="formFormula"></div>
+        <p class="excluded"><b>Excluded:</b> printer purchase and depreciation, design/CAD time, failed or test prints, labor beyond the allowance, any hinge pin or hardware if later needed, packaging, shipping, taxes.</p>
+      </div>
+    </div>
+    <div class="verdict" id="costVerdict" aria-live="polite"></div>
+  </section>
+
+  <!-- ===================== COMPARE ===================== -->
+  <section id="compare" aria-labelledby="cmpH">
+    <h2 id="cmpH">Compare the two versions</h2>
+    <p class="muted">A summary to help you choose. No version is declared best: weigh the trade-offs for your own use.</p>
+    <div class="cmp">
+      <table>
+        <thead><tr><th scope="col">Aspect</th><th scope="col" class="fold">A · Fold (cardboard-style)</th><th scope="col" class="form">B · Form (3D-printed)</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Assembly process</th>
+            <td><span class="ans">Fold the card body, glue tabs, thread one body band and two mounting straps through slots.</span><span class="ans-hidden">Hidden in tester mode</span></td>
+            <td><span class="ans">Print three parts; remove supports and finish. User identifies frame, ring and clip. How ring and clip join the frame is not yet defined.</span><span class="ans-hidden">Hidden in tester mode</span></td></tr>
+          <tr><th scope="row">Attachment method</th>
+            <td><span class="ans">Two separate hook-and-loop straps pass through backplate slots and wrap around the bag strap.</span><span class="ans-hidden">Hidden in tester mode</span></td>
+            <td><span class="ans">Rear clip surrounds the bag strap; a latch closes behind it.</span><span class="ans-hidden">Hidden in tester mode</span></td></tr>
+          <tr><th scope="row">Bottle insertion / removal</th>
+            <td><span class="ans">Place the bottle on the support from the front and close the body band. To remove: release the band, then lift.</span><span class="ans-hidden">Hidden in tester mode</span></td>
+            <td><span class="ans">Lower the bottle through the top of the ring onto the cradle. To remove: lift straight up through the ring.</span><span class="ans-hidden">Hidden in tester mode</span></td></tr>
+          <tr><th scope="row">Assumed cost</th>
+            <td><span class="ans" id="cmpFold"></span><span class="ans-hidden">Hidden in tester mode</span></td>
+            <td><span class="ans" id="cmpForm"></span><span class="ans-hidden">Hidden in tester mode</span></td></tr>
+          <tr><th scope="row">Possible weakness</th>
+            <td><span class="ans">Cardboard may deform with moisture; more manual steps (three hook-and-loop parts to open and close).</span><span class="ans-hidden">Hidden in tester mode</span></td>
+            <td><span class="ans">Fixed ring and clip may not suit other bottle diameters or strap sizes.</span><span class="ans-hidden">Hidden in tester mode</span></td></tr>
+          <tr><th scope="row">Needs physical testing</th>
+            <td><span class="ans">Effect of moisture on the card; whether mounting straps stay in place on the strap; band grip on the bottle; wear at folds and slots.</span><span class="ans-hidden">Hidden in tester mode</span></td>
+            <td><span class="ans">Ring and cradle fit across real bottles; clip fit on different straps; whether the latch stays closed; repeated opening; effect of print orientation.</span><span class="ans-hidden">Hidden in tester mode</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel pref">
+      <fieldset class="radios" style="border:0;padding:0;margin:0">
+        <legend style="font-weight:800;margin-bottom:6px">Your preferred version</legend>
+        <label><input type="radio" name="pref" value="Fold" data-persist="pref"> A · Fold</label>
+        <label><input type="radio" name="pref" value="Form" data-persist="pref"> B · Form</label>
+        <label><input type="radio" name="pref" value="Undecided" data-persist="pref"> Undecided</label>
+      </fieldset>
+      <div>
+        <label for="prefReason" style="font-weight:700">Reason for your choice</label>
+        <textarea id="prefReason" data-persist="prefReason" placeholder="e.g. what matters most to you and why"></textarea>
+        <p class="small muted" id="prefEcho" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TESTER ===================== -->
+  <section id="tester" aria-labelledby="tstH">
+    <h2 id="tstH">Tester session</h2>
+    <p class="muted">Facilitator: switch on <b>Tester mode</b> in the top bar before the tester looks at the screen. Let the tester use the drawing buttons, then ask the questions below. Responses start blank, are never scored automatically, and are stored only in this browser.</p>
+    <ol class="questions">
+      <li>How does each version attach to the strap and hold the bottle?</li>
+      <li>How would you insert and remove a bottle?</li>
+      <li>Name one weakness of each and choose your preferred version.</li>
+    </ol>
+    <div class="testers" id="testers"></div>
+    <div class="row">
+      <button class="btn" id="dlResponses">Download responses (.txt)</button>
+      <button class="btn warn" id="clearResponses">Clear tester responses</button>
+      <span class="small muted" id="saveStatus" aria-live="polite"></span>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>Interactive concept prototype. Dimensions and costs are assumptions. Physical fit, retention, and durability have not been tested.</b></p>
+    <p>No strength, load capacity, safety certification, durability or environmental benefit is claimed for either version. Drawings are schematic and not to scale.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+'use strict';
+var NS = 'http://www.w3.org/2000/svg';
+var KEY = 'carrycup-prototype-v1';
+
+/* ---------- storage ---------- */
+var storageOK = true;
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ storageOK = false; return {}; } }
+var saved = load();
+function persist(){
+  try{ localStorage.setItem(KEY, JSON.stringify(saved)); storageOK = true; }catch(e){ storageOK = false; }
+  var st = document.getElementById('saveStatus');
+  st.textContent = storageOK ? 'Saved in this browser.' : 'Local storage unavailable: responses will be lost when the page closes. Use Download.';
+}
+
+function el(tag, attrs){ var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); return e; }
+
+/* ---------- corrugation texture ---------- */
+(function(){
+  var pts = [];
+  for (var y = 224, i = 0; y <= 436; y += 6, i++) pts.push((i % 2 ? 186 : 178) + ',' + y);
+  document.getElementById('F-corr').setAttribute('points', pts.join(' '));
+})();
+
+/* ---------- labels ---------- */
+var LABELS = {
+  fold: [
+    {parent:'#F-lbl', x:6, y:44, text:['Backpack strap'], to:[[140,74]], part:'#F-strap',
+     info:'The bag shoulder strap, seen from the side. Not part of the product. Its width is an assumed design target (see Assumptions).'},
+    {parent:'#F-lbl', x:6, y:300, text:['2 mounting straps','hook-and-loop'], to:[[132,268],[132,398]], part:'#F-mount, #F-mount-o',
+     info:'Two separate hook-and-loop straps: additional components, not cardboard. Each threads through a pair of backplate slots and wraps around the bag strap. How well they grip the strap is untested.'},
+    {parent:'#F-hA', x:310, y:282, text:['Backplate','folded cardboard'], to:[[190,296]], part:'#F-plate',
+     info:'Folded cardboard panel that sits against the front of the bag strap. Slots let the straps and body band pass through. Card may soften or deform if it gets wet.'},
+    {parent:'#F-hC', x:310, y:338, text:['Body band','hook-and-loop'], to:[[220,350]], part:'#F-band, #F-band-o',
+     info:'Adjustable hook-and-loop band around the bottle body (additional component). Open it before removing the bottle; close it after inserting. The orange tab is the pull end.'},
+    {parent:'#F-sL', x:310, y:462, text:['Bottom support','folded cardboard'], to:[[284,446]], part:'#F-support',
+     info:'Folded-out base the bottle stands on, with a small front lip intended to stop it sliding forward. Load capacity is unknown.'},
+    {parent:'#F-hB', x:78, y:30, text:['Bottle'], to:[[68,44]], part:'#F-bottle',
+     info:'The user’s own reusable bottle (not supplied). The example size is an assumption: see the Assumptions panel.'}
+  ],
+  form: [
+    {parent:'#M-lbl', x:6, y:44, text:['Backpack strap'], to:[[140,74]], part:'#M-strap',
+     info:'The bag shoulder strap, seen from the side. Not part of the product. Its width is an assumed design target (see Assumptions).'},
+    {parent:'#M-lbl', x:6, y:250, text:['Rear clip','printed'], to:[[160,310]], part:'#M-clip',
+     info:'Printed clip on the back of the frame. It surrounds the bag strap, then a latch closes behind the strap (see the top-view inset). Clip geometry and retention are untested design assumptions.'},
+    {parent:'#M-lbl', x:6, y:352, text:['Closing latch'], to:[[121,330]], part:'#M-gate, #M-igate',
+     info:'The clip’s closing piece. Grey = open, so the clip can pass around the strap. Orange = closed behind the strap. Whether it stays closed in use is untested.'},
+    {parent:'#M-hC', x:310, y:286, text:['Upper retaining ring'], to:[[277,304]], part:'#M-ring, #M-ring-b',
+     info:'Fixed printed ring sized for an assumed bottle diameter. The bottle is lowered through it from the top and lifted out the same way. A fixed ring may not fit other bottle diameters.'},
+    {parent:'#M-hA', x:310, y:396, text:['Printed frame','backplate + bottom cradle'], to:[[186,384],[262,446]], part:'#M-frame',
+     info:'Printed backplate that sits against the strap, joined to a bottom cradle the bottle rests on. Material, wall thickness and print settings are not chosen yet.'},
+    {parent:'#M-hB', x:78, y:30, text:['Bottle'], to:[[68,44]], part:'#M-bottle',
+     info:'The user’s own reusable bottle (not supplied). The example size is an assumption: see the Assumptions panel.'}
+  ]
+};
+
+function buildLabels(name, svg, info){
+  LABELS[name].forEach(function(c){
+    var host = svg.querySelector(c.parent);
+    var g = el('g', {'class':'lbl', tabindex:'0', role:'button', 'aria-label': c.text.join(', ') + ' — show explanation'});
+    var leaders = el('g', {});
+    var rect = el('rect', {'class':'lbl-r', x:c.x, y:c.y, rx:6, height: 8 + 14 * c.text.length});
+    var t = el('text', {'class':'lbl-t', x:c.x + 8, y:c.y + 15});
+    c.text.forEach(function(s, i){
+      var ts = el('tspan', {x:c.x + 8, dy: i ? 13 : 0});
+      if (i) ts.setAttribute('class', 'sub');
+      ts.textContent = s; t.appendChild(ts);
+    });
+    g.appendChild(leaders); g.appendChild(rect); g.appendChild(t);
+    host.appendChild(g);
+    var w = Math.ceil(t.getBBox().width) + 16; if (!isFinite(w) || w < 20) w = c.text[0].length * 7 + 16;
+    rect.setAttribute('width', w);
+    var h = 8 + 14 * c.text.length;
+    c.to.forEach(function(p){
+      var sx, sy;
+      if (p[0] < c.x) { sx = c.x; sy = c.y + h / 2; }
+      else if (p[0] > c.x + w) { sx = c.x + w; sy = c.y + h / 2; }
+      else { sx = p[0]; sy = p[1] > c.y ? c.y + h : c.y; }
+      leaders.appendChild(el('path', {'class':'lbl-l', d:'M' + sx + ' ' + sy + ' L' + p[0] + ' ' + p[1]}));
+      leaders.appendChild(el('circle', {'class':'lbl-d', cx:p[0], cy:p[1], r:2.6}));
+    });
+    function activate(){
+      svg.querySelectorAll('.part.hl').forEach(function(n){ n.classList.remove('hl'); });
+      svg.querySelectorAll('.lbl.on').forEach(function(n){ n.classList.remove('on'); });
+      svg.querySelectorAll(c.part).forEach(function(n){ n.classList.add('hl'); });
+      g.classList.add('on');
+      info.textContent = '';
+      var s = document.createElement('strong'); s.textContent = c.text.join(' — ');
+      var p = document.createElement('span'); p.textContent = c.info;
+      info.appendChild(s); info.appendChild(p);
+    }
+    g.addEventListener('click', activate);
+    g.addEventListener('keydown', function(e){ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); } });
+  });
+}
+
+/* ---------- interaction controllers ---------- */
+var CAPS = {
+  fold: {
+    reset:'Holder detached, bottle beside it. Start with “Attach to bag”.',
+    a1:'The folded cardboard backplate is placed flat against the front of the bag strap.',
+    a2:'Two hook-and-loop mounting straps (threaded through the backplate slots) wrap around the bag strap and press closed.',
+    i1:'The body band is open. The bottle is brought in from the front, above the bottom support.',
+    i2:'The bottle rests on the bottom support. Next, the band wraps the bottle…',
+    i3:'…and the hook-and-loop body band closes around the bottle body.',
+    r1:'First release the body band: pull the orange tab to open it.',
+    r2:'Lift the bottle off the support and out to the front. The band stays open for next time.',
+    ex:'Exploded view: one folded card body (backplate + bottom support) plus three separate hook-and-loop parts — two mounting straps and one body band. The fasteners are additional components.',
+    exOff:'Exploded view closed. The previous state is restored.',
+    needAttach:'Attach the holder to the bag before inserting a bottle.'
+  },
+  form: {
+    reset:'Holder detached with its rear clip latch open (grey). Start with “Attach to bag”.',
+    a1:'With the latch open, the holder is moved so the rear clip surrounds the bag strap.',
+    a2:'The latch closes behind the strap (orange). The top-view inset shows it swinging shut.',
+    i1:'The bottle is raised above the upper retaining ring.',
+    i2:'The bottle is lowered through the ring until it rests on the bottom cradle.',
+    r1:'Lift the bottle straight up through the ring.',
+    r2:'The bottle is clear of the holder. There is no band or strap to release.',
+    ex:'Exploded view: printed frame (backplate + bottom cradle), separate upper retaining ring, and rear clip with latch. Clip geometry and retention are untested assumptions.',
+    exOff:'Exploded view closed. The previous state is restored.',
+    needAttach:'Attach the holder to the bag before inserting a bottle.'
+  }
+};
+
+function Controller(name){
+  var root = document.getElementById(name);
+  var svg = root.querySelector('svg.drawing');
+  var cap = root.querySelector('.caption-text');
+  var statusEl = root.querySelector('.status');
+  var info = root.querySelector('.info');
+  var C = CAPS[name];
+  var timers = [], s;
+  function btn(a){ return root.querySelector('[data-act="' + a + '"]'); }
+  function say(t){ cap.textContent = t; }
+  function render(){
+    var c = svg.classList;
+    c.toggle('is-attached', s.attached);
+    c.toggle('is-secured', s.secured);
+    c.toggle('band-closed', s.band);
+    c.toggle('is-exploded', s.exploded);
+    ['out','near','above','in'].forEach(function(b){ c.toggle('bottle-' + b, s.bottle === b); });
+    btn('attach').disabled = s.busy || s.exploded || s.attached;
+    btn('insert').disabled = s.busy || s.exploded || !s.secured || s.bottle !== 'out';
+    btn('remove').disabled = s.busy || s.exploded || s.bottle !== 'in';
+    btn('explode').disabled = s.busy;
+    btn('explode').setAttribute('aria-pressed', String(s.exploded));
+    statusEl.textContent = '';
+    var parts = [
+      ['Holder', s.secured ? 'attached' : (s.attached ? 'attaching…' : 'not attached')],
+      ['Bottle', s.bottle === 'in' ? 'in holder' : (s.bottle === 'out' ? 'out' : 'moving…')]
+    ];
+    if (name === 'fold') parts.push(['Body band', s.band ? 'closed' : 'open']);
+    else parts.push(['Latch', s.secured ? 'closed' : 'open']);
+    if (s.exploded) parts.push(['View', 'exploded']);
+    parts.forEach(function(p){
+      var sp = document.createElement('span'); sp.textContent = p[0] + ': ';
+      var b = document.createElement('b'); b.textContent = p[1]; sp.appendChild(b); statusEl.appendChild(sp);
+    });
+    if (!s.secured && !s.busy && !s.exploded) {
+      var hint = document.createElement('span'); hint.textContent = '“Insert bottle” unlocks after attaching.'; statusEl.appendChild(hint);
+    }
+  }
+  function seq(steps, total){
+    s.busy = true; render();
+    steps.forEach(function(st){
+      timers.push(setTimeout(function(){ st.fn(); if (st.cap) say(st.cap); render(); }, st.at));
+    });
+    timers.push(setTimeout(function(){ s.busy = false; render(); }, total));
+  }
+  function reset(){
+    timers.forEach(clearTimeout); timers = [];
+    s = {attached:false, secured:false, bottle:'out', band:false, exploded:false, busy:false};
+    say(C.reset); render();
+  }
+  var actions = {
+    attach: function(){
+      seq([{at:0, cap:C.a1, fn:function(){ s.attached = true; }},
+           {at:1000, cap:C.a2, fn:function(){ s.secured = true; }}], 1700);
+    },
+    insert: function(){
+      if (!s.secured) { say(C.needAttach); return; }
+      if (name === 'fold') {
+        seq([{at:0, cap:C.i1, fn:function(){ s.band = false; s.bottle = 'near'; }},
+             {at:1000, cap:C.i2, fn:function(){ s.bottle = 'in'; }},
+             {at:1800, cap:C.i3, fn:function(){ s.band = true; }}], 2400);
+      } else {
+        seq([{at:0, cap:C.i1, fn:function(){ s.bottle = 'above'; }},
+             {at:1050, cap:C.i2, fn:function(){ s.bottle = 'in'; }}], 2000);
+      }
+    },
+    remove: function(){
+      if (name === 'fold') {
+        seq([{at:0, cap:C.r1, fn:function(){ s.band = false; }},
+             {at:800, fn:function(){ s.bottle = 'near'; }},
+             {at:1350, cap:C.r2, fn:function(){ s.bottle = 'out'; }}], 2300);
+      } else {
+        seq([{at:0, cap:C.r1, fn:function(){ s.bottle = 'above'; }},
+             {at:1000, cap:C.r2, fn:function(){ s.bottle = 'out'; }}], 2000);
+      }
+    },
+    explode: function(){ s.exploded = !s.exploded; say(s.exploded ? C.ex : C.exOff); render(); },
+    reset: reset
+  };
+  root.querySelectorAll('[data-act]').forEach(function(b){
+    b.addEventListener('click', function(){ actions[b.dataset.act](); });
+  });
+  buildLabels(name, svg, info);
+  reset();
+}
+Controller('fold');
+Controller('form');
+
+/* ---------- storyboard step-through ---------- */
+document.querySelectorAll('[data-play]').forEach(function(b){
+  var timer = null;
+  var steps = document.querySelectorAll('#steps-' + b.dataset.play + ' .step');
+  function stop(){ clearInterval(timer); timer = null; steps.forEach(function(s){ s.classList.remove('is-current'); }); b.textContent = 'Step through'; }
+  b.addEventListener('click', function(){
+    if (timer) { stop(); return; }
+    var i = 0; b.textContent = 'Stop';
+    steps[0].classList.add('is-current');
+    timer = setInterval(function(){
+      steps[i].classList.remove('is-current'); i++;
+      if (i >= steps.length) { stop(); return; }
+      steps[i].classList.add('is-current');
+    }, 1600);
+  });
+});
+
+/* ---------- tester cards ---------- */
+(function(){
+  var host = document.getElementById('testers');
+  var checks = ['Explains Fold attachment / retention','Explains Form attachment / retention','Identifies a weakness of Fold','Identifies a weakness of Form'];
+  [1,2].forEach(function(n){
+    var fs = document.createElement('fieldset'); fs.className = 'tester-card';
+    var lg = document.createElement('legend'); lg.textContent = 'Tester ' + n; fs.appendChild(lg);
+    var qs = [['q1','1. How does each version attach to the strap and hold the bottle?'],
+              ['q2','2. How would you insert and remove a bottle?'],
+              ['q3','3. One weakness of each version']];
+    qs.forEach(function(q){
+      var id = 't' + n + q[0];
+      var l = document.createElement('label'); l.className = 'q'; l.htmlFor = id; l.textContent = q[1];
+      var ta = document.createElement('textarea'); ta.id = id; ta.dataset.persist = id; ta.dataset.tester = '1';
+      fs.appendChild(l); fs.appendChild(ta);
+    });
+    var pl = document.createElement('label'); pl.className = 'q'; pl.htmlFor = 't' + n + 'pref'; pl.textContent = '3. Preferred version';
+    var sel = document.createElement('select'); sel.id = 't' + n + 'pref'; sel.dataset.persist = sel.id; sel.dataset.tester = '1';
+    [['','— not recorded —'],['Fold','A · Fold'],['Form','B · Form'],['No preference','No preference']].forEach(function(o){
+      var op = document.createElement('option'); op.value = o[0]; op.textContent = o[1]; sel.appendChild(op);
+    });
+    fs.appendChild(pl); fs.appendChild(sel);
+    var cl = document.createElement('div'); cl.className = 'checklist';
+    var cp = document.createElement('p'); cp.textContent = 'Facilitator checklist — tick only what the tester said'; cl.appendChild(cp);
+    checks.forEach(function(txt, i){
+      var lab = document.createElement('label');
+      var cb = document.createElement('input'); cb.type = 'checkbox'; cb.dataset.persist = 't' + n + 'c' + i; cb.dataset.tester = '1';
+      lab.appendChild(cb); lab.appendChild(document.createTextNode(txt)); cl.appendChild(lab);
+    });
+    var tally = document.createElement('p'); tally.className = 'small muted'; tally.id = 't' + n + 'tally'; tally.style.margin = '6px 0 0'; cl.appendChild(tally);
+    fs.appendChild(cl);
+    var nl = document.createElement('label'); nl.className = 'q'; nl.htmlFor = 't' + n + 'notes'; nl.textContent = 'Facilitator notes';
+    var nt = document.createElement('textarea'); nt.id = 't' + n + 'notes'; nt.dataset.persist = nt.id; nt.dataset.tester = '1';
+    fs.appendChild(nl); fs.appendChild(nt);
+    host.appendChild(fs);
+  });
+})();
+function updateTally(){
+  [1,2].forEach(function(n){
+    var k = 0; for (var i = 0; i < 4; i++) if (saved['t' + n + 'c' + i]) k++;
+    document.getElementById('t' + n + 'tally').textContent = 'Facilitator ticks: ' + k + ' of 4';
+  });
+}
+
+/* ---------- persistence binding ---------- */
+function bindPersist(inp){
+  var k = inp.dataset.persist;
+  if (Object.prototype.hasOwnProperty.call(saved, k)) {
+    if (inp.type === 'checkbox') inp.checked = !!saved[k];
+    else if (inp.type === 'radio') inp.checked = saved[k] === inp.value;
+    else inp.value = saved[k];
+  }
+  function onChange(){
+    if (inp.type === 'radio') { if (!inp.checked) return; saved[k] = inp.value; }
+    else if (inp.type === 'checkbox') saved[k] = inp.checked;
+    else saved[k] = inp.value;
+    persist(); recalc(); updateTally(); echoPref();
+  }
+  inp.addEventListener('input', onChange);
+  inp.addEventListener('change', onChange);
+}
+document.querySelectorAll('[data-persist]').forEach(bindPersist);
+
+/* ---------- tester mode ---------- */
+var tt = document.getElementById('testerToggle');
+tt.checked = !!saved.testerMode;
+function applyTester(){ document.body.classList.toggle('tester', tt.checked); }
+tt.addEventListener('change', function(){ saved.testerMode = tt.checked; persist(); applyTester(); });
+applyTester();
+
+/* ---------- costs ---------- */
+function num(id){ var v = parseFloat(document.getElementById(id).value); return isFinite(v) && v >= 0 ? v : 0; }
+function fmt(n){ return Math.round(n).toLocaleString('en-US') + ' VND'; }
+function setText(id, t){ document.getElementById(id).textContent = t; }
+function recalc(){
+  var rows = [['fCard','Cardboard'],['fBand','Body band'],['fMount','Mounting straps'],['fGlue','Adhesive']];
+  var fold = 0, parts = [];
+  rows.forEach(function(r){
+    var q = num(r[0] + 'Q'), u = num(r[0] + 'U'), t = q * u;
+    fold += t; setText(r[0] + 'T', fmt(t)); parts.push(q + ' × ' + Math.round(u).toLocaleString('en-US'));
+  });
+  setText('foldTotal', fmt(fold));
+  setText('foldFormula', 'Fold = ' + parts.join(' + ') + ' = ' + fmt(fold));
+  var mass = num('mMass'), rate = num('mRate'), fin = num('mFin');
+  var print = mass * rate, form = print + fin;
+  setText('mPrintT', fmt(print)); setText('mFinT', fmt(fin)); setText('formTotal', fmt(form));
+  setText('formFormula', 'Form = (' + mass + ' g × ' + Math.round(rate).toLocaleString('en-US') + ' VND/g) + ' + Math.round(fin).toLocaleString('en-US') + ' = ' + fmt(form));
+  setText('cmpFold', fmt(fold) + ' (entered assumptions, see exclusions)');
+  setText('cmpForm', fmt(form) + ' (entered assumptions, see exclusions)');
+  var v = document.getElementById('costVerdict');
+  var d = Math.abs(fold - form);
+  if (fold === form) v.textContent = 'With the values entered, both totals are equal (' + fmt(fold) + '). These are demo assumptions, not quotes.';
+  else v.textContent = 'With the values entered, the ' + (fold < form ? 'Fold' : 'Form') + ' total is lower by ' + fmt(d) + '. This compares entered demo assumptions only; excluded costs (labor, equipment, failed prints, etc.) could change the result.';
+  document.querySelectorAll('.d-dia').forEach(function(n){ n.textContent = fmtDim('dDia'); });
+  document.querySelectorAll('.d-h').forEach(function(n){ n.textContent = fmtDim('dH'); });
+  document.querySelectorAll('.d-s').forEach(function(n){ n.textContent = fmtDim('dS'); });
+}
+function fmtDim(id){ var v = num(id); return String(Math.round(v * 10) / 10); }
+function echoPref(){
+  var e = document.getElementById('prefEcho');
+  var reason = document.getElementById('prefReason').value.trim();
+  e.textContent = saved.pref ? ('Recorded preference: ' + saved.pref + (reason ? ' — “' + reason + '”' : '') + '. Saved in this browser.') : 'No preference recorded yet.';
+}
+document.getElementById('resetAssump').addEventListener('click', function(){
+  ['dDia','dH','dS'].forEach(function(id){ var i = document.getElementById(id); i.value = i.dataset.default; saved[id] = i.value; });
+  persist(); recalc();
+});
+
+/* ---------- tester export / clear ---------- */
+document.getElementById('dlResponses').addEventListener('click', function(){
+  var lines = ['CarryCup tester responses', 'Exported: ' + new Date().toLocaleString(), ''];
+  var checks = ['Explains Fold attachment/retention','Explains Form attachment/retention','Identifies a weakness of Fold','Identifies a weakness of Form'];
+  [1,2].forEach(function(n){
+    lines.push('=== Tester ' + n + ' ===');
+    lines.push('Q1 Attach & hold: ' + (saved['t'+n+'q1'] || ''));
+    lines.push('Q2 Insert & remove: ' + (saved['t'+n+'q2'] || ''));
+    lines.push('Q3 Weaknesses: ' + (saved['t'+n+'q3'] || ''));
+    lines.push('Preferred version: ' + (saved['t'+n+'pref'] || 'not recorded'));
+    checks.forEach(function(c, i){ lines.push('[' + (saved['t'+n+'c'+i] ? 'x' : ' ') + '] ' + c); });
+    lines.push('Facilitator notes: ' + (saved['t'+n+'notes'] || ''));
+    lines.push('');
+  });
+  var blob = new Blob([lines.join('\r\n')], {type:'text/plain;charset=utf-8'});
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'carrycup-tester-responses.txt';
+  document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+});
+document.getElementById('clearResponses').addEventListener('click', function(){
+  if (!window.confirm('Clear all Tester 1 and Tester 2 responses and checklist ticks?')) return;
+  document.querySelectorAll('[data-tester]').forEach(function(inp){
+    if (inp.type === 'checkbox') inp.checked = false; else inp.value = '';
+    delete saved[inp.dataset.persist];
+  });
+  persist(); updateTally();
+});
+
+recalc(); updateTally(); echoPref();
+document.getElementById('saveStatus').textContent = storageOK ? 'Responses save automatically in this browser.' : 'Local storage unavailable: use Download to keep responses.';
+})();
+</script>
+</body>
+</html>
